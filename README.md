@@ -2,7 +2,7 @@
 
 Учебный проект: тестирование публичного API **SWAPI (Star Wars API)** с использованием Postman.
 
-**Base URL:** https://www.swapi.tech/api
+**Base URL:** https://www.swapi.tech
 
 ## Содержание репозитория
 - **docs/test-cases.md** — тест-кейсы (TC-API-001…TC-API-007)
