@@ -1,0 +1,25 @@
+name: API tess (Newman)
+on:
+  push:
+     branches: [ "main" ]
+  pull_request:
+
+jobs:
+  newman:
+     runs-on: ubuntu-latest
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+
+       - name: Setuo Node
+         uses: actions/checkout@v4
+
+         with:
+           node-version: "20"
+           cache: "npm"
+
+       - name: Install deps
+         run: npm ci
+
+       - name: Run Postman collection
+         run: npm run test:swapi
