@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "4d8cac17-8d00-4a2b-98c6-f35044e5e033",
+		"name": "SWAPI",
+		"description": "Набор запросов и автопроверок для тестового задания: персонажи (Luke/Vader), негативный кейс, планеты, фильмы/транспорт/звездолёты.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48145106",
+		"_collection_link": "https://gulyazaikina-349475.postman.co/workspace/05e9d3eb-c1fa-4815-83be-d6db7db00e97/collection/48145106-4d8cac17-8d00-4a2b-98c6-f35044e5e033?action=share&source=collection_link&creator=48145106"
+	},
+	"item": [
+		{
+			"name": "People",
+			"item": [
+				{
+					"name": "Get Luke Skywalker",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"",
+									"pm.test('API message is ok', function () {",
+									"  if (json && json.message !== undefined) pm.expect(json.message).to.eql('ok');",
+									"});",
+									"",
+									"pm.test('Luke basic fields are correct', function () {",
+									"  pm.expect(props.name).to.eql(pm.environment.get('expectedLukeName') || 'Luke Skywalker');",
+									"  pm.expect(props.height).to.eql(pm.environment.get('expectedLukeHeight') || '172');",
+									"  pm.expect(props.mass).to.eql(pm.environment.get('expectedLukeMass') || '77');",
+									"  pm.expect(props.gender).to.eql(pm.environment.get('expectedLukeGender') || 'male');",
+									"  pm.expect(props.birth_year).to.eql(pm.environment.get('expectedLukeBirthYear') || '19BBY');",
+									"  pm.expect(props.homeworld).to.be.a('string').and.not.empty;",
+									"  pm.expect(props.films).to.be.an('array');",
+									"});",
+									"",
+									"// Сохраняем ссылки для дальнейших запросов",
+									"pm.environment.set('lukeHomeworldUrl', props.homeworld);",
+									"pm.environment.set('lukeFilms', JSON.stringify(props.films || []));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Darth Vader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"",
+									"pm.test('API message is ok', function () {",
+									"  if (json && json.message !== undefined) pm.expect(json.message).to.eql('ok');",
+									"});",
+									"",
+									"pm.test('Vader basic fields are correct', function () {",
+									"  pm.expect(props.name).to.eql(pm.environment.get('expectedVaderName') || 'Darth Vader');",
+									"  pm.expect(props.height).to.eql(pm.environment.get('expectedVaderHeight') || '202');",
+									"  pm.expect(props.mass).to.eql(pm.environment.get('expectedVaderMass') || '136');",
+									"  pm.expect(props.gender).to.eql(pm.environment.get('expectedVaderGender') || 'male');",
+									"  pm.expect(props.birth_year).to.eql(pm.environment.get('expectedVaderBirthYear') || '41.9BBY');",
+									"  pm.expect(props.homeworld).to.be.a('string').and.not.empty;",
+									"});",
+									"",
+									"pm.environment.set('vaderHomeworldUrl', props.homeworld);",
+									"pm.environment.set('vaderFilms', JSON.stringify(props.films || []));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Negative: Get non-existing person",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 404 (Not Found)', function () {",
+									"  pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('Error body is JSON with message/detail', function () {",
+									"  const ct = pm.response.headers.get('Content-Type') || '';",
+									"  pm.expect(ct.toLowerCase()).to.include('application/json');",
+									"  const j = pm.response.json();",
+									"  pm.expect(j).to.be.an('object');",
+									"  pm.expect( (j.message || j.detail || j.error) , 'message/detail/error field should exist').to.exist;",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/9999",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								"9999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by name (query: luke)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"const json = pm.response.json();",
+									"pm.test('Search returns results array', function(){",
+									"  pm.expect(json.result).to.be.an('array');",
+									"});",
+									"pm.test('At least one result matches Luke', function(){",
+									"  const names = (json.result || []).map(x => (x && x.properties ? x.properties.name : x.name)).filter(Boolean);",
+									"  pm.expect(names.join(' | ').toLowerCase()).to.include('luke');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/?name=luke",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								""
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "luke"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Visited Planets",
+			"item": [
+				{
+					"name": "Visited planets_Luke",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"/*",
+									"  Этот тест демонстрирует «планеты, на которых побывал персонаж» как:",
+									"  people.films -> film.properties.planets -> planet.properties",
+									"  Проверяем, что:",
+									"    - список планет не пустой",
+									"    - для каждой планеты есть name/climate/terrain",
+									"    - среди них есть Tatooine (как минимум)",
+									"*/",
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"const films = props.films || [];",
+									"",
+									"pm.test('Luke has films array', function(){",
+									"  pm.expect(films).to.be.an('array').and.not.empty;",
+									"});",
+									"",
+									"let planetUrls = new Set();",
+									"let planetNames = new Set();",
+									"",
+									"function fetchJson(url){",
+									"  return new Promise((resolve, reject) => {",
+									"    pm.sendRequest({ url, method: 'GET', header: { 'Accept': 'application/json' } }, (err, res) => {",
+									"      if (err) return reject(err);",
+									"      try { resolve(res.json()); } catch(e){ reject(e); }",
+									"    });",
+									"  });",
+									"}",
+									"",
+									"pm.test('Visited planets resolved from films (name/climate/terrain)', function(done){",
+									"  (async () => {",
+									"    try {",
+									"      for (const filmUrl of films) {",
+									"        const filmJson = await fetchJson(filmUrl);",
+									"        const filmProps = (filmJson && filmJson.result && filmJson.result.properties) ? filmJson.result.properties : filmJson;",
+									"        (filmProps.planets || []).forEach(u => planetUrls.add(u));",
+									"      }",
+									"",
+									"      pm.expect(Array.from(planetUrls).length, 'Should have at least 1 planet from films').to.be.greaterThan(0);",
+									"",
+									"      for (const pUrl of planetUrls) {",
+									"        const pJson = await fetchJson(pUrl);",
+									"        const pProps = (pJson && pJson.result && pJson.result.properties) ? pJson.result.properties : pJson;",
+									"        pm.expect(pProps.name, 'planet.name exists').to.be.a('string').and.not.empty;",
+									"        pm.expect(pProps.climate, 'planet.climate exists').to.be.a('string');",
+									"        pm.expect(pProps.terrain, 'planet.terrain exists').to.be.a('string');",
+									"        planetNames.add(pProps.name);",
+									"      }",
+									"",
+									"      const namesLower = Array.from(planetNames).map(x => x.toLowerCase());",
+									"      pm.expect(namesLower).to.include((pm.environment.get('expectedTatooineName') || 'Tatooine').toLowerCase());",
+									"",
+									"      // Сохраняем для отчёта/дальнейшего использования",
+									"      pm.environment.set('lukeVisitedPlanets', JSON.stringify(Array.from(planetNames)));",
+									"      done();",
+									"    } catch (e) {",
+									"      done(e);",
+									"    }",
+									"  })();",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Visited planets_Vader",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"/*",
+									"  «Планеты, на которых побывал Darth Vader» вычисляем как:",
+									"  people.films -> film.properties.planets -> planet.properties",
+									"  Проверяем, что:",
+									"    - список планет не пустой",
+									"    - для каждой планеты есть name/climate/terrain",
+									"  Дополнительно: проверяем наличие Tatooine (часто встречается в связанных данных).",
+									"*/",
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"const films = props.films || [];",
+									"",
+									"pm.test('Vader has films array', function(){",
+									"  pm.expect(films).to.be.an('array').and.not.empty;",
+									"});",
+									"",
+									"let planetUrls = new Set();",
+									"let planetNames = new Set();",
+									"",
+									"function fetchJson(url){",
+									"  return new Promise((resolve, reject) => {",
+									"    pm.sendRequest({ url, method: 'GET', header: { 'Accept': 'application/json' } }, (err, res) => {",
+									"      if (err) return reject(err);",
+									"      try { resolve(res.json()); } catch(e){ reject(e); }",
+									"    });",
+									"  });",
+									"}",
+									"",
+									"pm.test('Visited planets resolved from films (name/climate/terrain)', function(done){",
+									"  (async () => {",
+									"    try {",
+									"      for (const filmUrl of films) {",
+									"        const filmJson = await fetchJson(filmUrl);",
+									"        const filmProps = (filmJson && filmJson.result && filmJson.result.properties) ? filmJson.result.properties : filmJson;",
+									"        (filmProps.planets || []).forEach(u => planetUrls.add(u));",
+									"      }",
+									"",
+									"      pm.expect(Array.from(planetUrls).length, 'Should have at least 1 planet from films').to.be.greaterThan(0);",
+									"",
+									"      for (const pUrl of planetUrls) {",
+									"        const pJson = await fetchJson(pUrl);",
+									"        const pProps = (pJson && pJson.result && pJson.result.properties) ? pJson.result.properties : pJson;",
+									"        pm.expect(pProps.name, 'planet.name exists').to.be.a('string').and.not.empty;",
+									"        pm.expect(pProps.climate, 'planet.climate exists').to.be.a('string');",
+									"        pm.expect(pProps.terrain, 'planet.terrain exists').to.be.a('string');",
+									"        planetNames.add(pProps.name);",
+									"      }",
+									"",
+									"      pm.environment.set('vaderVisitedPlanets', JSON.stringify(Array.from(planetNames)));",
+									"",
+									"      const expected = (pm.environment.get('expectedTatooineName') || 'Tatooine').toLowerCase();",
+									"      const namesLower = Array.from(planetNames).map(x => x.toLowerCase());",
+									"      pm.expect(namesLower).to.include(expected);",
+									"",
+									"      done();",
+									"    } catch (e) {",
+									"      done(e);",
+									"    }",
+									"  })();",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/people/4",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"people",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Films",
+			"item": [
+				{
+					"name": "Get film (ID=1) and required fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"pm.test('Film has required fields', function(){",
+									"  pm.expect(props.title).to.eql(pm.environment.get('expectedFilm1Title') || 'A New Hope');",
+									"  pm.expect(props.episode_id).to.exist;",
+									"  pm.expect(props.director).to.be.a('string').and.not.empty;",
+									"  pm.expect(props.planets).to.be.an('array');",
+									"  pm.expect(props.characters).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/films/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"films",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicles / Starships",
+			"item": [
+				{
+					"name": "Get vehicle (ID=14)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"pm.test('Vehicle contract fields exist', function(){",
+									"  pm.expect(props.name).to.be.a('string').and.not.empty;",
+									"  pm.expect(props.model).to.be.a('string');",
+									"  pm.expect(props.vehicle_class).to.be.a('string');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/vehicles/14",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"vehicles",
+								"14"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get starship (ID=12)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"  pm.response.to.have.status(200);",
+									"});",
+									"const json = pm.response.json();",
+									"const props = (json && json.result && json.result.properties) ? json.result.properties : json;",
+									"pm.test('Starship contract fields exist', function(){",
+									"  pm.expect(props.name).to.be.a('string').and.not.empty;",
+									"  pm.expect(props.model).to.be.a('string');",
+									"  pm.expect(props.starship_class).to.be.a('string');",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/starships/12",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"starships",
+								"12"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
