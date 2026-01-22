@@ -5,9 +5,9 @@
 **Base URL:** https://www.swapi.tech
 
 ## Содержание репозитория
-- **docs/test-cases.md** — тест-кейсы (TC-API-001…TC-API-007)
-- **docs/test-report.md** — краткий отчёт о тестировании
-- **postman/** — Postman collection + environment для прогона
+- [Тест-кейсы](docs/test-cases.md)
+- [Краткий отчёт о тестировании](docs/test-report.md) 
+- [Postman collection + environment для прогона](postman/)
 
 ## Как запустить
 1. Открой Postman
