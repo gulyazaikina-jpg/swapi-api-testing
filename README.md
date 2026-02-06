@@ -21,12 +21,12 @@
 - [CI прогон коллекции в GitHub Actions](.github/workflows/newman.yml)
   
 ## Как запустить в Postman
-1. Открой Postman
-2. Import → импортируй:
+1. Открыть Postman
+2. Import:
    - `postman/SWAPI.postman_collection.json`
    - `postman/SWAPI.postman_environment.json`
-3. Выбери Environment (в правом верхнем углу)
-4. Запусти коллекцию через **Collection Runner**
+3. Выбрать Environment 
+4. Запустить коллекцию через **Collection Runner**
 
 ## Как запустить через Newman
 Запуск выполняется через npm-скрипт (Newman установлен как devDependency).
